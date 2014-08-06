@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.forms import TextInput
 
 if __name__ == '__main__':
     from django.conf import settings
@@ -25,12 +26,14 @@ class SmartURLFormField(forms.URLField):
     True
     >>> Form({'url': u'домен.рф '}).is_valid()
     True
-    >>> f = Form({'url': u'xn--80ajfftz0a.xn--p1ai'})
+    >>> f = Form({'url': u'земфира.рф'})
     >>> f.is_valid()
     True
     >>> f.cleaned_data['url']
-    u'http://земфира.рф'
+    u'http://xn--80ajfftz0a.xn--p1ai/'
     """
+    widget = TextInput
+
     def clean(self, value):
         if value:
             value = value.strip().lower()
