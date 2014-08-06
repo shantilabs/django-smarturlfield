@@ -3,7 +3,7 @@ django-phonefields
 
 Install:
 ```
-pip install -e git+https://github.com/shantilabs/django-smarturlfield#egg=phonefields
+pip install git+https://github.com/shantilabs/django-smarturlfield#egg=phonefields
 ```
 
 Forms:
