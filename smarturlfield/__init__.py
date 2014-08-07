@@ -61,7 +61,7 @@ class SmartURLDbField(models.URLField):
 
     def south_field_triple(self):
         from south.modelsinspector import introspector
-        field_class = 'django.db.models.fields.CharField'
+        field_class = 'django.db.models.fields.URLField'
         args, kwargs = introspector(models.CharField(*self._options[0], **self._options[1]))
         kwargs['max_length'] = self._max_length
         return field_class, args, kwargs
