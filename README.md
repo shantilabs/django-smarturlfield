@@ -1,5 +1,7 @@
-django-phonefields
-==================
+django-smarturlfield
+====================
+
+Allow enter url without "http://"
 
 Install:
 ```
