@@ -9,4 +9,3 @@ class OneUrlModel(models.Model):
 
 class ManyUrlsModel(models.Model):
     urls = smarturlfield.MultipleSmartURLDbField()
-    # urls = models.TextField()

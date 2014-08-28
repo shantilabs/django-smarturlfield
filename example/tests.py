@@ -22,6 +22,7 @@ class UrlsTestCase(TestCase):
 
         form = F({'urls': 'ya.RU, xx.com '
                           'httP://zzz.ff'})
+        self.assertTrue(form.is_valid(), form.as_p())
         instance = form.save()
 
         self.assertEquals(instance.urls, [
@@ -29,3 +30,6 @@ class UrlsTestCase(TestCase):
             u'http://ya.ru',
             u'http://zzz.ff',
         ])
+
+        form = F(instance=instance)
+        self.assertFalse(form.errors, unicode(form))

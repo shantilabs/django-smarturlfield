@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
+from django.core import validators
 from django.forms import TextInput, Textarea
 from django.utils import six
 from django.utils.encoding import smart_text
+from django.utils.translation import ugettext_lazy
 
 
 if __name__ == '__main__':
@@ -16,7 +18,7 @@ from django.db import models
 from idn import force_punicode_url
 
 
-class MultipleSmartURLFormField(forms.URLField):
+class MultipleSmartURLFormField(forms.CharField):
     u"""
     >>> class Form(forms.Form):
     ...     urls = MultipleSmartURLFormField()
@@ -27,20 +29,36 @@ class MultipleSmartURLFormField(forms.URLField):
     >>> f.is_valid()
     True
     >>> print f.cleaned_data['urls']
-    http://xn--80ajfftz0a.xn--p1ai
-    http://ya.ru
-    http://zzzz.com
+    [u'http://xn--80ajfftz0a.xn--p1ai', u'http://ya.ru', u'http://zzzz.com']
     """
     widget = Textarea
-    split_regex = re.compile('[,\s]')
+    split_regex = re.compile(r';|,\s*|\s+')
+
+    default_error_messages = {
+        'invalid': ugettext_lazy('Enter a valid URL.'),
+    }
+
+    default_validators = [validators.URLValidator()]
+
+    def to_python(self, value):
+        if not value:
+            return []
+        lines = [force_punicode_url(normalize_url(x)) for x in self.split_regex.split(value)]
+        lines = filter(None, sorted(set(lines)))
+        return lines
 
     def clean(self, value):
-        if value:
-            lines = [force_punicode_url(normalize_url(x)) for x in self.split_regex.split(value)]
-            lines = filter(None, sorted(set(lines)))
-            return '\n'.join(x for x in lines if x)
-        else:
-            return ''
+        value = self.to_python(value)
+        for url in value:
+            self.validate(url)
+            self.run_validators(url)
+        return value
+        # return '\n'.join(value)
+
+    def prepare_value(self, value):
+        if isinstance(value, list):
+            return '\n'.join(value)
+        return value
 
 
 class SmartURLFormField(forms.URLField):
@@ -95,6 +113,7 @@ class SmartURLDbField(models.URLField):
 
 class MultipleSmartURLDbField(models.TextField):
     _options = None
+    __metaclass__ = models.SubfieldBase
 
     def __init__(self, *args, **kwargs):
         self._options = (args, kwargs)
@@ -104,16 +123,42 @@ class MultipleSmartURLDbField(models.TextField):
         kwargs['form_class'] = MultipleSmartURLFormField
         return super(MultipleSmartURLDbField, self).formfield(**kwargs)
 
-    def to_python(self, value):
-        return value.split('\n') if value else []
-
-    def get_prep_value(self, value):
+    def get_db_prep_value(self, value, connection, prepared=False):
         if isinstance(value, six.string_types):
-            return u'\n'.join(value)
-        elif value is None:
             return value
+        elif isinstance(value, list):
+            return '\n'.join(value)
+
+    def to_python(self, value):
+        if isinstance(value, six.string_types):
+            return value.splitlines()
         else:
-            return smart_text(value)
+            return value
+
+    def get_internal_type(self):
+        return 'TextField'
+
+    # def to_python(self, value):
+    #     return value.split('\n') if value else []
+    # #
+    # def get_prep_value(self, value):
+    #     if isinstance(value, six.string_types):
+    #         return u'\n'.join(value)
+    #     elif value is None:
+    #         return value
+    #     else:
+    #         return smart_text(value)
+
+    # def get_db_prep_value(self, value, connection, prepared=False):
+    #     # Casts times into the format expected by the backend
+    #     if not prepared:
+    #         value = self.get_prep_value(value)
+    #     return connection.ops.value_to_db_time(value)
+    #
+    # def value_to_string(self, obj):
+    #     raise Exception('123')
+    #     val = self._get_val_from_obj(obj)
+    #     return '' if val is None else val.isoformat()
 
     def south_field_triple(self):
         from south.modelsinspector import introspector
