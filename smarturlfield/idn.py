@@ -53,6 +53,8 @@ def force_punicode_url(url):
     >>> force_punicode_url('https://земфира.рф/page1/')
     'https://xn--80ajfftz0a.xn--p1ai/page1/'
     """
+    if not url:
+        return url
     scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
     netloc = force_punycode_domain_name(netloc)
     data = scheme, netloc, path, params, query, fragment
