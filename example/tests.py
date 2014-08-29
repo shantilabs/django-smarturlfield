@@ -33,3 +33,20 @@ class UrlsTestCase(TestCase):
 
         form = F(instance=instance)
         self.assertFalse(form.errors, unicode(form))
+
+    def test_model(self):
+        instance = ManyUrlsModel.objects.create(
+            urls=['http://ya.ru', 'http://xx.com'],
+        )
+        self.assertEquals(
+            ManyUrlsModel.objects.get(id=instance.id).urls,
+            ['http://ya.ru', 'http://xx.com'],
+        )
+
+        instance = ManyUrlsModel.objects.create(
+            urls='http://ya.ru',
+        )
+        self.assertEquals(
+            ManyUrlsModel.objects.get(id=instance.id).urls,
+            ['http://ya.ru'],
+        )
