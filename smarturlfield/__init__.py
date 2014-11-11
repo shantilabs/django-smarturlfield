@@ -1,20 +1,13 @@
 # -*- coding: utf-8 -*-
 import re
+from django import forms
+from django.db import models
+from django.conf import settings
 from django.core import validators
 from django.forms import TextInput, Textarea
 from django.utils import six
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy
-
-
-if __name__ == '__main__':
-    from django.conf import settings
-    if not settings.configured:
-        settings.configure()
-
-
-from django import forms
-from django.db import models
 from idn import force_punicode_url
 
 
@@ -84,6 +77,10 @@ class SmartURLFormField(forms.URLField):
     widget = TextInput
 
     def clean(self, value):
+        if getattr(settings, 'SMARTURL_FIELD_EXTRA_VALID_URLS', None):
+            for pattern in settings.SMARTURL_FIELD_EXTRA_VALID_URLS:
+                if value == pattern:
+                    return value
         if value:
             value = normalize_url(value)
         value = super(SmartURLFormField, self).clean(value)
