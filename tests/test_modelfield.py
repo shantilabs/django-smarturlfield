@@ -1,22 +1,8 @@
 # coding: utf-8
 from django import forms
 
-from django.db import models
 import smarturlfield
-
-
-class OneUrlModel(models.Model):
-    url = smarturlfield.SmartURLDbField()
-
-    class Meta:
-        app_label = 'example'
-
-
-class ManyUrlsModel(models.Model):
-    urls = smarturlfield.MultipleSmartURLDbField()
-
-    class Meta:
-        app_label = 'example'
+from example.models import OneUrlModel, ManyUrlsModel
 
 
 def test_one_url(db):
