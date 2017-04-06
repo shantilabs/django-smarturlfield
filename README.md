@@ -1,7 +1,7 @@
 django-smarturlfield
 ====================
 
-Allow enter url without "http://"
+Django model and form fields that performs URL normalization. For example it adds 'http://" prefix and forces punicode encoding.
 
 Install:
 ```

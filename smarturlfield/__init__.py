@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 import re
+
 from django import forms
 from django.db import models
 from django.conf import settings
@@ -8,7 +9,8 @@ from django.forms import TextInput, Textarea
 from django.utils import six
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy
-from idn import force_punicode_url
+
+from .idn import force_punicode_url
 
 
 class MultipleSmartURLFormField(forms.CharField):
@@ -37,7 +39,8 @@ class MultipleSmartURLFormField(forms.CharField):
         if not value:
             return []
         lines = [force_punicode_url(normalize_url(x)) for x in self.split_regex.split(value)]
-        lines = filter(None, sorted(set(lines)))
+        lines = [line for line in sorted(set(lines)) if line]
+
         return lines
 
     def clean(self, value):
@@ -88,32 +91,25 @@ class SmartURLFormField(forms.URLField):
 
 
 class SmartURLDbField(models.URLField):
-    _max_length = 200
-    _options = None
+    default_max_length = 200
 
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = self._max_length
-        self._options = (args, kwargs)
+        kwargs.setdefault('max_length', self.default_max_length)
         super(SmartURLDbField, self).__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
         kwargs['form_class'] = SmartURLFormField
         return super(SmartURLDbField, self).formfield(**kwargs)
 
-    def south_field_triple(self):
-        from south.modelsinspector import introspector
-        field_class = 'django.db.models.fields.URLField'
-        args, kwargs = introspector(models.CharField(*self._options[0], **self._options[1]))
-        kwargs['max_length'] = self._max_length
-        return field_class, args, kwargs
+    def deconstruct(self):
+        name, path, args, kwargs = super(SmartURLDbField, self).deconstruct()
+        if kwargs.get('max_length') == self.default_max_length:
+            kwargs.pop('max_length')
+        return name, path, args, kwargs
 
 
 class MultipleSmartURLDbField(models.TextField):
-    _options = None
-    __metaclass__ = models.SubfieldBase
-
     def __init__(self, *args, **kwargs):
-        self._options = (args, kwargs)
         super(MultipleSmartURLDbField, self).__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
@@ -126,42 +122,17 @@ class MultipleSmartURLDbField(models.TextField):
         elif isinstance(value, list):
             return '\n'.join(value)
 
+    def from_db_value(self, value, expression, connection, context):
+        return value.splitlines()
+
     def to_python(self, value):
-        if isinstance(value, six.string_types):
+        if isinstance(value, (six.string_types)):
             return value.splitlines()
         else:
             return value
 
     def get_internal_type(self):
         return 'TextField'
-
-    # def to_python(self, value):
-    #     return value.split('\n') if value else []
-    # #
-    # def get_prep_value(self, value):
-    #     if isinstance(value, six.string_types):
-    #         return u'\n'.join(value)
-    #     elif value is None:
-    #         return value
-    #     else:
-    #         return smart_text(value)
-
-    # def get_db_prep_value(self, value, connection, prepared=False):
-    #     # Casts times into the format expected by the backend
-    #     if not prepared:
-    #         value = self.get_prep_value(value)
-    #     return connection.ops.value_to_db_time(value)
-    #
-    # def value_to_string(self, obj):
-    #     raise Exception('123')
-    #     val = self._get_val_from_obj(obj)
-    #     return '' if val is None else val.isoformat()
-
-    def south_field_triple(self):
-        from south.modelsinspector import introspector
-        field_class = 'django.db.models.fields.TextField'
-        args, kwargs = introspector(models.TextField(*self._options[0], **self._options[1]))
-        return field_class, args, kwargs
 
 
 def normalize_url(s):
@@ -170,9 +141,3 @@ def normalize_url(s):
         return s
     else:
         return u'http://' + s
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
-    print 'tests passed'

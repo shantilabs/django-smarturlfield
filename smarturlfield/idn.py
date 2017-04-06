@@ -1,5 +1,10 @@
-# -*- coding: utf-8 -*-
-import urlparse
+# coding: utf-8
+import sys
+
+if sys.version_info > (3, 0):
+    from urllib.parse import urlparse, urlunparse
+else:
+    from urlparse import urlparse, urlunparse
 
 
 def force_punycode_domain_name(s):
@@ -19,9 +24,10 @@ def force_punycode_domain_name(s):
         return s
     else:
         try:
-            return s.encode('idna')
+            result = s.encode('idna')
         except TypeError:
-            return s.decode('utf-8').encode('idna')
+            result = s.decode('utf-8').encode('idna')
+        return result.decode()  # return string (not bytes)
 
 
 def force_readable_domain_name(s):
@@ -41,6 +47,7 @@ def force_readable_domain_name(s):
     s = s.lower().strip()
     if s.startswith('xn--') or '.xn--' in s:
         try:
+            s = s.encode()
             return s.decode('idna')
         except UnicodeError:
             return s
@@ -55,7 +62,7 @@ def force_punicode_url(url):
     """
     if not url:
         return url
-    scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
+    scheme, netloc, path, params, query, fragment = urlparse(url)
     netloc = force_punycode_domain_name(netloc)
     data = scheme, netloc, path, params, query, fragment
-    return urlparse.urlunparse(data)
+    return urlunparse(data)
