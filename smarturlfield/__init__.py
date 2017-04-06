@@ -14,18 +14,6 @@ from .idn import force_punicode_url
 
 
 class MultipleSmartURLFormField(forms.CharField):
-    u"""
-    >>> class Form(forms.Form):
-    ...     urls = MultipleSmartURLFormField()
-    >>> f = Form({'urls': u'''земфира.рф
-    ... http://ya.ru,zzzz.com
-    ... YA.ru
-    ... '''})
-    >>> f.is_valid()
-    True
-    >>> print f.cleaned_data['urls']
-    [u'http://xn--80ajfftz0a.xn--p1ai', u'http://ya.ru', u'http://zzzz.com']
-    """
     widget = Textarea
     split_regex = re.compile(r';|,\s*|\s+')
 
@@ -58,25 +46,6 @@ class MultipleSmartURLFormField(forms.CharField):
 
 
 class SmartURLFormField(forms.URLField):
-    u"""
-    >>> class Form(forms.Form):
-    ...     url = SmartURLFormField()
-    >>> Form({'url': '            '}).is_valid()
-    False
-    >>> Form({'url': 'ya.ru '}).is_valid()
-    True
-    >>> Form({'url': ' http://ya.ru '}).is_valid()
-    True
-    >>> Form({'url': u'http://домен.рф '}).is_valid()
-    True
-    >>> Form({'url': u'домен.рф '}).is_valid()
-    True
-    >>> f = Form({'url': u'земфира.рф'})
-    >>> f.is_valid()
-    True
-    >>> f.cleaned_data['url']
-    u'http://xn--80ajfftz0a.xn--p1ai/'
-    """
     widget = TextInput
 
     def clean(self, value):

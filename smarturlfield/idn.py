@@ -8,13 +8,8 @@ else:
 
 
 def force_punycode_domain_name(s):
-    u"""
-    >>> force_punycode_domain_name('xn--80ajfftz0a.xn--p1ai')
-    'xn--80ajfftz0a.xn--p1ai'
-    >>> force_punycode_domain_name('земфира.рф')
-    'xn--80ajfftz0a.xn--p1ai'
-    >>> force_punycode_domain_name('d56.ru')
-    'd56.ru'
+    """
+    Converts human-readable IDN domain to punycode.
     """
     if s is None:
         return s
@@ -31,15 +26,8 @@ def force_punycode_domain_name(s):
 
 
 def force_readable_domain_name(s):
-    u"""
-    >>> res = u'земфира.рф'
-    >>> res == force_readable_domain_name('xn--80ajfftz0a.xn--p1ai')
-    True
-    >>> res = 'земфира.рф'
-    >>> res == force_readable_domain_name('земфира.рф')
-    True
-    >>> force_readable_domain_name('d56.ru')
-    'd56.ru'
+    """
+    Converts punycode hostname to humen-readable name.
     """
     if s is None:
         return s
@@ -56,9 +44,8 @@ def force_readable_domain_name(s):
 
 
 def force_punicode_url(url):
-    u"""
-    >>> force_punicode_url('https://земфира.рф/page1/')
-    'https://xn--80ajfftz0a.xn--p1ai/page1/'
+    """
+    Convert domain name of given URL to punycode.
     """
     if not url:
         return url
