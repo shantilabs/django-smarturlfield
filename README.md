@@ -1,6 +1,8 @@
 django-smarturlfield
 ====================
 
+[![Build Status](https://travis-ci.org/shantilabs/django-smarturlfield.svg?branch=master)](https://travis-ci.org/shantilabs/django-smarturlfield)
+
 Django model and form fields that performs URL normalization. For example it adds 'http://" prefix and forces punicode encoding.
 
 Install:
