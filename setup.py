@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name='django-smarturlfield',
-    version='1.0.1',
+    version='1.0.2',
     author='Maxim Oransky',
     author_email='maxim.oransky@gmail.com',
     description="Django model and form fields that performs URL normalization. For example it adds 'http://' prefix and forces punicode encoding.",
