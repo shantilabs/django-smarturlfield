@@ -1,13 +1,20 @@
 from distutils.core import setup
 
+from io import open
+from os import path
+
+here = path.abspath(path.dirname(__file__))
+
+with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name='django-smarturlfield',
-    version='1.0.2',
+    version='1.0.3',
     author='Maxim Oransky',
     author_email='maxim.oransky@gmail.com',
     description="Django model and form fields that performs URL normalization. For example it adds 'http://' prefix and forces punicode encoding.",
-    long_description=open('README.rst').read(),
+    long_description=long_description,
     url='https://github.com/shantilabs/django-smarturlfield',
     packages=[
         'smarturlfield'
