@@ -5,7 +5,7 @@ django-smarturlfield
 Django model and form fields that performs URL normalization. For example it adds `'http://'` prefix and forces punicode encoding.
 There are also fields that stores a list of URLs.
 
-Tested with Django 1.9, 1.10 and 1.11.
+Tested with Django 1.11 and 2.1.
 
 .. image:: https://travis-ci.org/shantilabs/django-smarturlfield.svg?branch=master
    :target: https://travis-ci.org/shantilabs/django-smarturlfield
