@@ -1,5 +1,8 @@
+*.egg-info
 *.pyc
-__pycache__
-.tox
 .cache
+.idea
+.tox
 MANIFEST
+__pycache__
+dist
