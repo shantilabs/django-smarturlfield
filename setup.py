@@ -11,7 +11,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='django-smarturlfield',
-    version='1.0.4',
+    version='1.1.0',
     author='Maxim Oransky',
     author_email='maxim.oransky@gmail.com',
     description="Django model and form fields that performs URL normalization. For example it adds 'http://' prefix and forces punicode encoding.",
