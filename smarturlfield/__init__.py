@@ -1,4 +1,3 @@
-# coding: utf-8
 import re
 
 from django import forms
@@ -6,8 +5,6 @@ from django.db import models
 from django.conf import settings
 from django.core import validators
 from django.forms import TextInput, Textarea
-from django.utils import six
-from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy
 
 from .idn import force_punicode_url
@@ -60,6 +57,7 @@ class SmartURLFormField(forms.URLField):
 
 
 class SmartURLDbField(models.URLField):
+    description = "Smart URL Field"
     default_max_length = 200
 
     def __init__(self, *args, **kwargs):
@@ -78,30 +76,26 @@ class SmartURLDbField(models.URLField):
 
 
 class MultipleSmartURLDbField(models.TextField):
-    def __init__(self, *args, **kwargs):
-        super(MultipleSmartURLDbField, self).__init__(*args, **kwargs)
+    description = "Multiple smart URLs field"
 
     def formfield(self, **kwargs):
         kwargs['form_class'] = MultipleSmartURLFormField
         return super(MultipleSmartURLDbField, self).formfield(**kwargs)
 
-    def get_db_prep_value(self, value, connection, prepared=False):
-        if isinstance(value, six.string_types):
+    def get_prep_value(self, value):
+        if isinstance(value, str):
             return value
         elif isinstance(value, list):
             return '\n'.join(value)
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection):
         return value.splitlines()
 
     def to_python(self, value):
-        if isinstance(value, (six.string_types)):
+        if isinstance(value, str):
             return value.splitlines()
         else:
             return value
-
-    def get_internal_type(self):
-        return 'TextField'
 
 
 def normalize_url(s):
