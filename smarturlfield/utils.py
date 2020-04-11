@@ -3,4 +3,4 @@ def normalize_url(s):
     if '://' in s or not s:
         return s
     else:
-        return u'http://' + s
+        return 'http://' + s

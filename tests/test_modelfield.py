@@ -29,9 +29,9 @@ def test_many_urls(db):
     instance = form.save()
 
     assert instance.urls == [
-        u'http://xx.com',
-        u'http://ya.ru',
-        u'http://zzz.ff',
+        'http://xx.com',
+        'http://ya.ru',
+        'http://zzz.ff',
     ]
 
     form = F(instance=instance)
