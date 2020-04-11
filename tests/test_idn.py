@@ -1,4 +1,3 @@
-# coding: utf-8
 import pytest
 
 from smarturlfield.idn import force_punycode_domain_name, force_readable_domain_name, force_punicode_url

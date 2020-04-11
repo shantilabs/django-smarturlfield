@@ -1,8 +1,7 @@
-# coding: utf-8
-
 import pytest
 from django.forms import Form
-from smarturlfield import SmartURLFormField, MultipleSmartURLFormField
+from smarturlfield.formfields import MultipleSmartURLFormField, SmartURLFormField
+
 
 @pytest.mark.parametrize('url,is_valid', [
     (u'            ', False),

@@ -1,7 +1,5 @@
-# coding: utf-8
 from django import forms
 
-import smarturlfield
 from example.models import OneUrlModel, ManyUrlsModel
 
 

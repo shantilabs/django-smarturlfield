@@ -1,10 +1,5 @@
-# coding: utf-8
-import sys
 
-if sys.version_info > (3, 0):
-    from urllib.parse import urlparse, urlunparse
-else:
-    from urlparse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse
 
 
 def force_punycode_domain_name(s):
@@ -27,7 +22,7 @@ def force_punycode_domain_name(s):
 
 def force_readable_domain_name(s):
     """
-    Converts punycode hostname to humen-readable name.
+    Converts punycode hostname to human-readable name.
     """
     if s is None:
         return s
